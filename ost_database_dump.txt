@@ -1,0 +1,122 @@
+PRAGMA foreign_keys=ON;
+BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS "company" (
+company_id integer primary key autoincrement,
+company_name varchar(255) not null,
+start_date date not null,
+constraint ck_company unique (company_name)
+);
+CREATE TABLE soundtrack(
+soundtrack_id integer primary key autoincrement,
+soundtrack_title varchar(255) not null,
+release_date date not null,
+runtime time not null, numberoftracks int not null,
+constraint ck_sountracktitle unique(soundtrack_title)
+);
+CREATE TABLE IF NOT EXISTS "soundtrack_lists_track"(
+soundtrack_id int,
+track_id not null,
+constraint fk_soundtrack foreign key(soundtrack_id) references soundtrack(soundtrack_id),
+constraint fk_track foreign key(track_id) references track(track_id)
+);
+CREATE TABLE composer_workswith_artist(
+composer_id int,
+artist_id int,
+composer_name varchar(255),
+artist_name varchar(255),
+constraint fk_composer foreign key(composer_id, composer_name) references composer(composer_id, composer_name),
+constraint fk_composer foreign key(artist_id, artist_name) references artist(artist_id, artist_name)
+);
+CREATE TABLE game_has_track(
+game_id int not null,
+track_id int not null,
+title varchar(255) not null,
+trackname varchar(255) not null,
+constraint fk_game foreign key(game_id,title) references game(game_id,title),
+constraint fk_track foreign key(track_id,trackname) references track(track_id,trackname)
+);
+CREATE TABLE company_produces_game(
+revenue int,
+company_id int,
+game_id int not null,
+company_name varchar(255),
+title varchar(255) not null,
+constraint fk_company foreign key(company_id,company_name) references company(company_id,company_name),
+constraint fk_game foreign key(game_id,title) references game(game_id,title)
+);
+CREATE TABLE game_has_soundtrack(
+game_id int not null,
+soundtrack_id int,
+title varchar(255) not null,
+soundtrack_title varchar(255),
+constraint fk_game foreign key(game_id,title) references game(game_id,title),
+constraint fk_soundtrack foreign key(soundtrack_id,soundtrack_title) references soundtrack(soundtrack_id,soundtrack_title)
+);
+CREATE TABLE composer_composes_track(
+composer_id int not null,
+track_id int not null,
+composer_name varchar(255) not null,
+trackname varchar(255) not null,
+constraint fk_composer foreign key(composer_id, composer_name) references composer(composer_id,composer_name),
+constraint fk_track foreign key(track_id,trackname) references track(track_id,trackname)
+);
+CREATE TABLE IF NOT EXISTS "composer"(
+composer_id integer primary key autoincrement,
+composer_name varchar(255) not null,
+age int,
+dateofbirth date,
+constraint ck_composer unique(composer_name)
+);
+CREATE TABLE IF NOT EXISTS "artist"(
+artist_id integer primary key autoincrement,
+artist_name varchar(255) not null,
+age int,
+dateofbirth date,
+constraint ck_artist unique(artist_name)
+);
+CREATE TABLE artist_performs_track(
+artist_id int,
+track_id int not null,
+artist_name varchar(255),
+trackname varchar(255) not null,
+constraint fk_artist foreign key(artist_id, artist_name) references artist(artist_id,artist_name),
+constraint fk_track foreign key(track_id,trackname) references track(track_id,trackname)
+);
+CREATE TABLE languages(
+language_id integer primary key autoincrement,
+language_name varchar(255) not null,
+constraint ck_language unique(language_name)
+);
+CREATE TABLE game_genre(
+genre_id integer primary key autoincrement,
+genre_name varchar(255) not null,
+constraint ck_genre unique(genre_name)
+);
+CREATE TABLE track_genre(
+genre_id integer primary key autoincrement,
+genre_name varchar(255) not null,
+constraint ck_genre unique(genre_name)
+);
+CREATE TABLE IF NOT EXISTS "game"(
+game_id integer primary key autoincrement,
+game_title varchar(255) not null,
+language int not null,
+genre int,
+release_date date not null,
+constraint ck_game unique(game_title),
+constraint fk_language foreign key(language) references languages(language_id),
+constraint fk_genre foreign key(genre) references game_genre(genre_id)
+);
+CREATE TABLE IF NOT EXISTS "track"(
+track_id integer primary key autoincrement,
+trackname varchar(255) not null,
+language int,
+genre int,
+release_date date not null,
+runtime time not null,
+constraint ck_trackname unique(trackname),
+constraint fk_language foreign key(language) references languages(language_id),
+constraint fk_language foreign key(genre) references track_genre(genre_id)
+);
+DELETE FROM sqlite_sequence;
+COMMIT;
